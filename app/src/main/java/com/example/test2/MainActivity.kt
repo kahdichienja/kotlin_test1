@@ -19,7 +19,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -28,6 +30,8 @@ import com.example.test2.ui.theme.Test2Theme
 import com.google.accompanist.coil.rememberCoilPainter
 import kotlinx.coroutines.launch
 import kotlin.math.max
+
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,14 +45,26 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+/* Using state in jetpack composed. */
 
+
+
+
+
+
+
+
+
+
+/* UI  play */
+@Preview(showBackground = true)
 @Composable
 fun LayoutsCodeLab(){
     Scaffold (
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Design With Composed Lab", style = MaterialTheme.typography.h5)
+                    Text(text = "Design With Composed", style = MaterialTheme.typography.h5)
                 },
                 actions = {
                     IconButton(onClick = { /*TODO*/ }) {
@@ -83,10 +99,29 @@ fun BodyContent(modifier: Modifier = Modifier){
                 }
             }
         )
-        SimpleList()
+        PreviewListView1()
     }
 
 }
+@Composable
+fun PreviewListView1(){
+    Scaffold{
+        /* New  GetCustomColumn we created*/
+        // We save the scrolling position with this state
+        val scrollState = rememberLazyListState()
+
+        LazyColumn(state = scrollState) {
+            for (topic in topics) {
+                items(topics.size) {
+                    GetImageColumn(text = topic)
+                }
+            }
+        }
+    }
+
+}
+
+
 
 @Composable
 fun SimpleList(){
@@ -129,11 +164,11 @@ fun SimpleList(){
 }
 
 
-@Preview
+//@Preview(showBackground = true)
 @Composable
 fun LayoutsCodeLabPreview(){
     Test2Theme{
-        LayoutsCodeLab()
+        SimpleList()
     }
 
 }
@@ -142,7 +177,6 @@ fun LayoutsCodeLabPreview(){
 
 @Composable
 fun PhotographerCard(modifier: Modifier = Modifier , numberCount: Number){
-
 
     Card(elevation = 10.dp, ) {
         Row(
@@ -178,7 +212,7 @@ fun PhotographerCard(modifier: Modifier = Modifier , numberCount: Number){
                         .padding(start = 8.dp)
                         .align(Alignment.CenterVertically)
                 ) {
-                    Text("Tracy My Love. ", fontWeight = FontWeight.Bold)
+                    Text("List View. ", fontWeight = FontWeight.Bold)
                     CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                         Text(text = "$numberCount sec.", style = MaterialTheme.typography.body2)
                     }
@@ -210,6 +244,49 @@ fun GetCustomColumn(modifier: Modifier, content: @Composable () -> Unit){
 
     }
 }
+
+
+/* Testing custom staggered Grid. */
+@Composable
+fun GetImageColumn(text: String){
+    val typography = MaterialTheme.typography
+    MaterialTheme{
+        Column (
+            modifier = Modifier.padding(16.dp)
+        ){
+            Card(
+                elevation = 10.dp
+
+            ){
+                Image(
+                    painter = painterResource(R.drawable.header),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .height(180.dp)
+                        .fillMaxWidth()
+                        .clip(shape = RoundedCornerShape(4.dp)),
+                    contentScale = ContentScale.Crop
+                )
+            }
+
+            Spacer(Modifier.height(16.dp))
+            Card(
+                elevation = 10.dp,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column (modifier = Modifier.padding(16.dp)){
+                    Text(text = text, style = typography.h4)
+                    Text("Nairobi Kenya", style = typography.body2)
+                    Text("14 th Feb 2021", style = typography.body2)
+                }
+            }
+        }
+
+    }
+}
+
+
+
 
 @Composable
 fun StaggeredGrid(
